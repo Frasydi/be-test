@@ -13,11 +13,12 @@ export async function seedAdmin(prisma:PrismaClient){
                 fullName:"Admin",
                 password : hashedPassword,
                 email:"admin@test.com",
-                role :Roles.ADMIN
+                role: Roles.ADMIN
             }
         })
         
         console.log("Admin seeded")
+        return;
     }
 
     console.log("Admin already seeded")

@@ -1,0 +1,11 @@
+productName,quantity,unitPrice,totalAmount,saleDate,customerName,customerEmail,region
+"Gaming Laptop",1,1299.99,1299.99,"2024-01-15","John Smith","john.smith@email.com","North"
+"Wireless Mouse",2,29.99,59.98,"2024-01-16","Jane Doe","jane.doe@email.com","South"
+"Mechanical Keyboard",1,89.99,89.99,"2024-01-17","Mike Johnson","mike.j@email.com","East"
+"4K Monitor",1,399.99,399.99,"2024-01-18","Sarah Wilson","sarah.w@email.com","West"
+"USB-C Hub",3,49.99,149.97,"2024-01-19","David Brown","david.b@email.com","North"
+"Webcam HD",1,79.99,79.99,"2024-01-20","Lisa Davis","lisa.d@email.com","South"
+"Headphones",2,199.99,399.98,"2024-01-21","Tom Anderson","tom.a@email.com","East"
+"Tablet 10 inch",1,349.99,349.99,"2024-01-22","Emily Garcia","emily.g@email.com","West"
+"Smartphone Case",5,19.99,99.95,"2024-01-23","Chris Martin","chris.m@email.com","North"
+"Power Bank",2,39.99,79.98,"2024-01-24","Amanda Taylor","amanda.t@email.com","South"

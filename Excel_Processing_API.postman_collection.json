@@ -1,0 +1,1521 @@
+{
+	"info": {
+		"_postman_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+		"name": "Excel Processing Backend API",
+		"description": "Complete API collection for the Excel Processing Backend System with JWT authentication, file upload processing, and dynamic filtering capabilities.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Authentication",
+			"item": [
+				{
+					"name": "Register User",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 201) {",
+									"    const response = pm.response.json();",
+									"    if (response.data && response.data.token) {",
+									"        pm.environment.set('authToken', response.data.token);",
+									"        pm.environment.set('userSlug', response.data.user.slug);",
+									"        pm.environment.set('userId', response.data.user.id);",
+									"    }",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"john.doe@example.com\",\n  \"password\": \"password123\",\n  \"fullName\": \"John Doe\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/auth/register",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth",
+								"register"
+							]
+						},
+						"description": "Register a new user account. The token from the response will be automatically saved to environment variables for use in subsequent requests."
+					},
+					"response": [
+						{
+							"name": "Successful Registration",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"email\": \"john.doe@example.com\",\n  \"password\": \"password123\",\n  \"fullName\": \"John Doe\"\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/auth/register",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"auth",
+										"register"
+									]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"success\": true,\n  \"message\": \"User registered successfully\",\n  \"data\": {\n    \"user\": {\n      \"id\": 1,\n      \"slug\": \"cljk123abc456def\",\n      \"email\": \"john.doe@example.com\",\n      \"fullName\": \"John Doe\",\n      \"role\": \"USER\",\n      \"createdAt\": \"2024-01-15T10:30:00.000Z\"\n    },\n    \"token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...\"\n  }\n}"
+						},
+						{
+							"name": "User Already Exists",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"email\": \"john.doe@example.com\",\n  \"password\": \"password123\",\n  \"fullName\": \"John Doe\"\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/auth/register",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"auth",
+										"register"
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"success\": false,\n  \"message\": \"User with this email already exists\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Login User",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    const response = pm.response.json();",
+									"    if (response.data && response.data.token) {",
+									"        pm.environment.set('authToken', response.data.token);",
+									"        pm.environment.set('userSlug', response.data.user.slug);",
+									"        pm.environment.set('userId', response.data.user.id);",
+									"    }",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"john.doe@example.com\",\n  \"password\": \"password123\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/auth/login",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth",
+								"login"
+							]
+						},
+						"description": "Login with existing user credentials. The token will be automatically saved for subsequent requests."
+					},
+					"response": [
+						{
+							"name": "Successful Login",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"email\": \"john.doe@example.com\",\n  \"password\": \"password123\"\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/auth/login",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"auth",
+										"login"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"success\": true,\n  \"message\": \"Login successful\",\n  \"data\": {\n    \"user\": {\n      \"id\": 1,\n      \"slug\": \"cljk123abc456def\",\n      \"email\": \"john.doe@example.com\",\n      \"fullName\": \"John Doe\",\n      \"role\": \"USER\"\n    },\n    \"token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...\"\n  }\n}"
+						},
+						{
+							"name": "Invalid Credentials",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"email\": \"john.doe@example.com\",\n  \"password\": \"wrongpassword\"\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/auth/login",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"auth",
+										"login"
+									]
+								}
+							},
+							"status": "Unauthorized",
+							"code": 401,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"success\": false,\n  \"message\": \"Invalid credentials\"\n}"
+						}
+					]
+				}
+			],
+			"description": "Authentication endpoints for user registration and login"
+		},
+		{
+			"name": "File Management",
+			"item": [
+				{
+					"name": "Upload CSV File",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 201) {",
+									"    const response = pm.response.json();",
+									"    if (response.data && response.data.id) {",
+									"        pm.environment.set('fileUploadId', response.data.id);",
+									"    }",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{authToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "file",
+									"type": "file",
+									"src": "/path/to/your/sample_products.csv",
+									"description": "Select a CSV or Excel file to upload. The file should contain product data with columns: name, sku, price, category, stock"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{baseUrl}}/files/upload",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"files",
+								"upload"
+							]
+						},
+						"description": "Upload a CSV or Excel file for background processing. The file will be immediately queued and processed asynchronously. Use form-data with field name 'file'. Supported formats: .csv, .xlsx, .xls. Maximum file size: 10MB."
+					},
+					"response": [
+						{
+							"name": "Successful Upload",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									}
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "file",
+											"type": "file",
+											"src": "/path/to/sample_products.csv",
+											"description": "CSV file containing product data"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{baseUrl}}/files/upload",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"files",
+										"upload"
+									]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"success\": true,\n  \"message\": \"File uploaded successfully and queued for processing\",\n  \"data\": {\n    \"id\": 1,\n    \"fileName\": \"products.csv\",\n    \"originalName\": \"sample_products.csv\",\n    \"status\": \"PENDING\",\n    \"createdAt\": \"2024-01-15T10:35:00.000Z\"\n  }\n}"
+						}
+					]
+				},
+				{
+					"name": "Upload Sales CSV File",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{authToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "file",
+									"type": "file",
+									"src": "/path/to/your/sample_sales.csv",
+									"description": "Select a CSV or Excel file to upload. The file should contain sales data with columns: productName, quantity, unitPrice, totalAmount, saleDate, customerName, customerEmail, region"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{baseUrl}}/files/upload",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"files",
+								"upload"
+							]
+						},
+						"description": "Upload a sales CSV or Excel file with customer and transaction data. Use form-data with field name 'file'."
+					},
+					"response": [
+						{
+							"name": "Sales File Upload Success",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									}
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "file",
+											"type": "file",
+											"src": "/path/to/sample_sales.csv",
+											"description": "CSV file containing sales data"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{baseUrl}}/files/upload",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"files",
+										"upload"
+									]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"success\": true,\n  \"message\": \"File uploaded successfully and queued for processing\",\n  \"data\": {\n    \"id\": 2,\n    \"fileName\": \"sales.csv\",\n    \"originalName\": \"sample_sales.csv\",\n    \"status\": \"PENDING\",\n    \"createdAt\": \"2024-01-15T10:40:00.000Z\"\n  }\n}"
+						}
+					]
+				},
+				{
+					"name": "Get All Files",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{authToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/files?page=1&rows=10",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"files"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "rows",
+									"value": "10"
+								}
+							]
+						},
+						"description": "Get paginated list of uploaded files with their processing status."
+					},
+					"response": [
+						{
+							"name": "Files List",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/files?page=1&rows=10",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"files"
+									],
+									"query": [
+										{
+											"key": "page",
+											"value": "1"
+										},
+										{
+											"key": "rows",
+											"value": "10"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"success\": true,\n  \"data\": {\n    \"entries\": [\n      {\n        \"id\": 1,\n        \"fileName\": \"products.csv\",\n        \"originalName\": \"sample_products.csv\",\n        \"fileSize\": 1024,\n        \"mimeType\": \"text/csv\",\n        \"status\": \"SUCCESS\",\n        \"processedAt\": \"2024-01-15T10:36:00.000Z\",\n        \"errorMessage\": null,\n        \"recordsProcessed\": 4,\n        \"totalRecords\": 4,\n        \"createdAt\": \"2024-01-15T10:35:00.000Z\",\n        \"updatedAt\": \"2024-01-15T10:36:00.000Z\"\n      },\n      {\n        \"id\": 2,\n        \"fileName\": \"sales.csv\",\n        \"originalName\": \"sample_sales.csv\",\n        \"fileSize\": 512,\n        \"mimeType\": \"text/csv\",\n        \"status\": \"PROCESSING\",\n        \"processedAt\": null,\n        \"errorMessage\": null,\n        \"recordsProcessed\": 0,\n        \"totalRecords\": 0,\n        \"createdAt\": \"2024-01-15T10:40:00.000Z\",\n        \"updatedAt\": \"2024-01-15T10:40:30.000Z\"\n      }\n    ],\n    \"totalData\": 2,\n    \"totalPage\": 1,\n    \"currentPage\": 1,\n    \"pageSize\": 10\n  }\n}"
+						}
+					]
+				},
+				{
+					"name": "Get Files with Filtering",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{authToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/files?page=1&rows=5&status=SUCCESS&search=product&orderKey=createdAt&orderRule=desc",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"files"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "rows",
+									"value": "5"
+								},
+								{
+									"key": "status",
+									"value": "SUCCESS"
+								},
+								{
+									"key": "search",
+									"value": "product"
+								},
+								{
+									"key": "orderKey",
+									"value": "createdAt"
+								},
+								{
+									"key": "orderRule",
+									"value": "desc"
+								}
+							]
+						},
+						"description": "Get files with advanced filtering: by status, search term, and custom sorting."
+					},
+					"response": [
+						{
+							"name": "Filtered Files",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/files?status=SUCCESS&search=product",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"files"
+									],
+									"query": [
+										{
+											"key": "status",
+											"value": "SUCCESS"
+										},
+										{
+											"key": "search",
+											"value": "product"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"success\": true,\n  \"data\": {\n    \"entries\": [\n      {\n        \"id\": 1,\n        \"fileName\": \"products.csv\",\n        \"originalName\": \"sample_products.csv\",\n        \"fileSize\": 1024,\n        \"mimeType\": \"text/csv\",\n        \"status\": \"SUCCESS\",\n        \"processedAt\": \"2024-01-15T10:36:00.000Z\",\n        \"recordsProcessed\": 4,\n        \"totalRecords\": 4,\n        \"createdAt\": \"2024-01-15T10:35:00.000Z\",\n        \"updatedAt\": \"2024-01-15T10:36:00.000Z\"\n      }\n    ],\n    \"totalData\": 1,\n    \"totalPage\": 1,\n    \"currentPage\": 1,\n    \"pageSize\": 10\n  }\n}"
+						}
+					]
+				},
+				{
+					"name": "Get File Details",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{authToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/files/{{fileUploadId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"files",
+								"{{fileUploadId}}"
+							]
+						},
+						"description": "Get detailed information about a specific file including sample processed data."
+					},
+					"response": [
+						{
+							"name": "File Details",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/files/1",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"files",
+										"1"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"success\": true,\n  \"data\": {\n    \"id\": 1,\n    \"fileName\": \"products.csv\",\n    \"originalName\": \"sample_products.csv\",\n    \"fileSize\": 1024,\n    \"mimeType\": \"text/csv\",\n    \"status\": \"SUCCESS\",\n    \"processedAt\": \"2024-01-15T10:36:00.000Z\",\n    \"recordsProcessed\": 4,\n    \"totalRecords\": 4,\n    \"createdAt\": \"2024-01-15T10:35:00.000Z\",\n    \"updatedAt\": \"2024-01-15T10:36:00.000Z\",\n    \"products\": [\n      {\n        \"id\": 1,\n        \"name\": \"Laptop Pro 15\",\n        \"sku\": \"LP15-001\",\n        \"price\": \"1299.99\",\n        \"category\": \"Electronics\"\n      },\n      {\n        \"id\": 2,\n        \"name\": \"Wireless Mouse\",\n        \"sku\": \"WM-002\",\n        \"price\": \"29.99\",\n        \"category\": \"Electronics\"\n      }\n    ],\n    \"salesRecords\": []\n  }\n}"
+						}
+					]
+				},
+				{
+					"name": "Get Processing Status",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{authToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/files/processing-status",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"files",
+								"processing-status"
+							]
+						},
+						"description": "Get current background processing queue status."
+					},
+					"response": [
+						{
+							"name": "Processing Status",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/files/processing-status",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"files",
+										"processing-status"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"success\": true,\n  \"data\": {\n    \"inProgress\": [2, 3],\n    \"queueSize\": 2\n  }\n}"
+						}
+					]
+				},
+				{
+					"name": "Delete File",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{authToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/files/{{fileUploadId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"files",
+								"{{fileUploadId}}"
+							]
+						},
+						"description": "Delete a file and all associated processed data."
+					},
+					"response": [
+						{
+							"name": "File Deleted",
+							"originalRequest": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/files/1",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"files",
+										"1"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"success\": true,\n  \"message\": \"File and associated data deleted successfully\"\n}"
+						}
+					]
+				}
+			],
+			"description": "File upload and management endpoints"
+		},
+		{
+			"name": "Data Retrieval",
+			"item": [
+				{
+					"name": "Get Products",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{authToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/data/products?page=1&rows=10",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"data",
+								"products"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "rows",
+									"value": "10"
+								}
+							]
+						},
+						"description": "Get paginated list of all processed products."
+					},
+					"response": [
+						{
+							"name": "Products List",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/data/products?page=1&rows=10",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"data",
+										"products"
+									],
+									"query": [
+										{
+											"key": "page",
+											"value": "1"
+										},
+										{
+											"key": "rows",
+											"value": "10"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"success\": true,\n  \"data\": {\n    \"entries\": [\n      {\n        \"id\": 1,\n        \"name\": \"Laptop Pro 15\",\n        \"sku\": \"LP15-001\",\n        \"description\": null,\n        \"price\": \"1299.99\",\n        \"category\": \"Electronics\",\n        \"stock\": 50,\n        \"fileUploadId\": 1,\n        \"createdAt\": \"2024-01-15T10:36:00.000Z\",\n        \"updatedAt\": \"2024-01-15T10:36:00.000Z\",\n        \"fileUpload\": {\n          \"id\": 1,\n          \"fileName\": \"products.csv\",\n          \"originalName\": \"sample_products.csv\"\n        }\n      },\n      {\n        \"id\": 2,\n        \"name\": \"Wireless Mouse\",\n        \"sku\": \"WM-002\",\n        \"description\": null,\n        \"price\": \"29.99\",\n        \"category\": \"Electronics\",\n        \"stock\": 200,\n        \"fileUploadId\": 1,\n        \"createdAt\": \"2024-01-15T10:36:00.000Z\",\n        \"updatedAt\": \"2024-01-15T10:36:00.000Z\",\n        \"fileUpload\": {\n          \"id\": 1,\n          \"fileName\": \"products.csv\",\n          \"originalName\": \"sample_products.csv\"\n        }\n      }\n    ],\n    \"totalData\": 4,\n    \"totalPage\": 1,\n    \"currentPage\": 1,\n    \"pageSize\": 10\n  }\n}"
+						}
+					]
+				},
+				{
+					"name": "Get Products with Filtering",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{authToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/data/products?page=1&rows=5&category=Electronics&search=laptop&fileUploadId=1&orderKey=price&orderRule=desc",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"data",
+								"products"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "rows",
+									"value": "5"
+								},
+								{
+									"key": "category",
+									"value": "Electronics"
+								},
+								{
+									"key": "search",
+									"value": "laptop"
+								},
+								{
+									"key": "fileUploadId",
+									"value": "1"
+								},
+								{
+									"key": "orderKey",
+									"value": "price"
+								},
+								{
+									"key": "orderRule",
+									"value": "desc"
+								}
+							]
+						},
+						"description": "Get products with advanced filtering by category, search term, source file, and custom sorting."
+					},
+					"response": [
+						{
+							"name": "Filtered Products",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/data/products?category=Electronics&search=laptop",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"data",
+										"products"
+									],
+									"query": [
+										{
+											"key": "category",
+											"value": "Electronics"
+										},
+										{
+											"key": "search",
+											"value": "laptop"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"success\": true,\n  \"data\": {\n    \"entries\": [\n      {\n        \"id\": 1,\n        \"name\": \"Laptop Pro 15\",\n        \"sku\": \"LP15-001\",\n        \"description\": null,\n        \"price\": \"1299.99\",\n        \"category\": \"Electronics\",\n        \"stock\": 50,\n        \"fileUploadId\": 1,\n        \"createdAt\": \"2024-01-15T10:36:00.000Z\",\n        \"updatedAt\": \"2024-01-15T10:36:00.000Z\",\n        \"fileUpload\": {\n          \"id\": 1,\n          \"fileName\": \"products.csv\",\n          \"originalName\": \"sample_products.csv\"\n        }\n      }\n    ],\n    \"totalData\": 1,\n    \"totalPage\": 1,\n    \"currentPage\": 1,\n    \"pageSize\": 10\n  }\n}"
+						}
+					]
+				},
+				{
+					"name": "Get Product by ID",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{authToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/data/products/1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"data",
+								"products",
+								"1"
+							]
+						},
+						"description": "Get detailed information about a specific product by its ID."
+					},
+					"response": [
+						{
+							"name": "Product Details",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/data/products/1",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"data",
+										"products",
+										"1"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"success\": true,\n  \"data\": {\n    \"id\": 1,\n    \"name\": \"Laptop Pro 15\",\n    \"sku\": \"LP15-001\",\n    \"description\": null,\n    \"price\": \"1299.99\",\n    \"category\": \"Electronics\",\n    \"stock\": 50,\n    \"fileUploadId\": 1,\n    \"createdAt\": \"2024-01-15T10:36:00.000Z\",\n    \"updatedAt\": \"2024-01-15T10:36:00.000Z\",\n    \"fileUpload\": {\n      \"id\": 1,\n      \"fileName\": \"products.csv\",\n      \"originalName\": \"sample_products.csv\"\n    }\n  }\n}"
+						}
+					]
+				},
+				{
+					"name": "Get Sales Records",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{authToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/data/sales?page=1&rows=10",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"data",
+								"sales"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "rows",
+									"value": "10"
+								}
+							]
+						},
+						"description": "Get paginated list of all processed sales records."
+					},
+					"response": [
+						{
+							"name": "Sales Records",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/data/sales?page=1&rows=10",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"data",
+										"sales"
+									],
+									"query": [
+										{
+											"key": "page",
+											"value": "1"
+										},
+										{
+											"key": "rows",
+											"value": "10"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"success\": true,\n  \"data\": {\n    \"entries\": [\n      {\n        \"id\": 1,\n        \"productId\": null,\n        \"productName\": \"Laptop Pro 15\",\n        \"quantity\": 1,\n        \"unitPrice\": \"1299.99\",\n        \"totalAmount\": \"1299.99\",\n        \"saleDate\": \"2024-01-15T00:00:00.000Z\",\n        \"customerName\": \"John Smith\",\n        \"customerEmail\": \"john@example.com\",\n        \"region\": \"US\",\n        \"fileUploadId\": 2,\n        \"createdAt\": \"2024-01-15T10:41:00.000Z\",\n        \"updatedAt\": \"2024-01-15T10:41:00.000Z\",\n        \"product\": null,\n        \"fileUpload\": {\n          \"id\": 2,\n          \"fileName\": \"sales.csv\",\n          \"originalName\": \"sample_sales.csv\"\n        }\n      }\n    ],\n    \"totalData\": 3,\n    \"totalPage\": 1,\n    \"currentPage\": 1,\n    \"pageSize\": 10\n  }\n}"
+						}
+					]
+				},
+				{
+					"name": "Get Sales with Date Range Filter",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{authToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/data/sales?page=1&rows=10&region=US&startDate=2024-01-01&endDate=2024-12-31&search=john&orderKey=saleDate&orderRule=desc",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"data",
+								"sales"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "rows",
+									"value": "10"
+								},
+								{
+									"key": "region",
+									"value": "US"
+								},
+								{
+									"key": "startDate",
+									"value": "2024-01-01"
+								},
+								{
+									"key": "endDate",
+									"value": "2024-12-31"
+								},
+								{
+									"key": "search",
+									"value": "john"
+								},
+								{
+									"key": "orderKey",
+									"value": "saleDate"
+								},
+								{
+									"key": "orderRule",
+									"value": "desc"
+								}
+							]
+						},
+						"description": "Get sales records with advanced filtering: by region, date range, customer search, and custom sorting."
+					},
+					"response": [
+						{
+							"name": "Filtered Sales",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/data/sales?region=US&startDate=2024-01-01&endDate=2024-12-31",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"data",
+										"sales"
+									],
+									"query": [
+										{
+											"key": "region",
+											"value": "US"
+										},
+										{
+											"key": "startDate",
+											"value": "2024-01-01"
+										},
+										{
+											"key": "endDate",
+											"value": "2024-12-31"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"success\": true,\n  \"data\": {\n    \"entries\": [\n      {\n        \"id\": 1,\n        \"productId\": null,\n        \"productName\": \"Laptop Pro 15\",\n        \"quantity\": 1,\n        \"unitPrice\": \"1299.99\",\n        \"totalAmount\": \"1299.99\",\n        \"saleDate\": \"2024-01-15T00:00:00.000Z\",\n        \"customerName\": \"John Smith\",\n        \"customerEmail\": \"john@example.com\",\n        \"region\": \"US\",\n        \"fileUploadId\": 2,\n        \"createdAt\": \"2024-01-15T10:41:00.000Z\",\n        \"updatedAt\": \"2024-01-15T10:41:00.000Z\",\n        \"product\": null,\n        \"fileUpload\": {\n          \"id\": 2,\n          \"fileName\": \"sales.csv\",\n          \"originalName\": \"sample_sales.csv\"\n        }\n      }\n    ],\n    \"totalData\": 2,\n    \"totalPage\": 1,\n    \"currentPage\": 1,\n    \"pageSize\": 10\n  }\n}"
+						}
+					]
+				},
+				{
+					"name": "Get Sales Record by ID",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{authToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/data/sales/1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"data",
+								"sales",
+								"1"
+							]
+						},
+						"description": "Get detailed information about a specific sales record by its ID."
+					},
+					"response": [
+						{
+							"name": "Sales Record Details",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/data/sales/1",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"data",
+										"sales",
+										"1"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"success\": true,\n  \"data\": {\n    \"id\": 1,\n    \"productId\": null,\n    \"productName\": \"Laptop Pro 15\",\n    \"quantity\": 1,\n    \"unitPrice\": \"1299.99\",\n    \"totalAmount\": \"1299.99\",\n    \"saleDate\": \"2024-01-15T00:00:00.000Z\",\n    \"customerName\": \"John Smith\",\n    \"customerEmail\": \"john@example.com\",\n    \"region\": \"US\",\n    \"fileUploadId\": 2,\n    \"createdAt\": \"2024-01-15T10:41:00.000Z\",\n    \"updatedAt\": \"2024-01-15T10:41:00.000Z\",\n    \"product\": null,\n    \"fileUpload\": {\n      \"id\": 2,\n      \"fileName\": \"sales.csv\",\n      \"originalName\": \"sample_sales.csv\"\n    }\n  }\n}"
+						}
+					]
+				},
+				{
+					"name": "Get System Analytics",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/data/analytics",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"data",
+								"analytics"
+							]
+						},
+						"description": "Get system-wide analytics including total records, files, and recent sales data. This endpoint is public and doesn't require authentication."
+					},
+					"response": [
+						{
+							"name": "System Analytics",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/data/analytics",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"data",
+										"analytics"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"success\": true,\n  \"data\": {\n    \"totalProducts\": 8,\n    \"totalSalesRecords\": 15,\n    \"totalFiles\": 5,\n    \"processingFiles\": 1,\n    \"totalSalesLast30Days\": \"15750.85\"\n  }\n}"
+						}
+					]
+				}
+			],
+			"description": "Data retrieval endpoints for processed information"
+		},
+		{
+			"name": "Health Check",
+			"item": [
+				{
+					"name": "Ping Server",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/ping",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"ping"
+							]
+						},
+						"description": "Simple health check endpoint to verify server is running."
+					},
+					"response": [
+						{
+							"name": "Server Online",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/ping",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"ping"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"success\": true,\n  \"message\": \"pong!\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Get API Info",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								""
+							]
+						},
+						"description": "Get basic API information."
+					},
+					"response": [
+						{
+							"name": "API Info",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										""
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"success\": true,\n  \"message\": \"main routes!\"\n}"
+						}
+					]
+				}
+			],
+			"description": "Basic health check and API information endpoints"
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:3150",
+			"type": "string"
+		},
+		{
+			"key": "authToken",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "userId",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "fileUploadId",
+			"value": "",
+			"type": "string"
+		}
+	]
+}

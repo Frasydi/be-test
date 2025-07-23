@@ -1,167 +1,366 @@
-# Node Wave Base Repositories for Backend
+# Excel Processing Backend System
 
+A robust backend system for processing large Excel/CSV files with background processing, JWT authentication, and advanced dynamic filtering capabilities.
 
-## Tech Stacks 
+## 🚀 Project Overview
 
-- Language : TypeScript 
-- ORM : Prisma 
-- Database : MySQL
-- HTTP Framework : Express 
-- Logging : Winston + Morgan
+This system solves the problem of processing large Excel/CSV files without causing timeouts or blocking the user interface. When users upload files, the system immediately responds with success and processes the data in the background, providing real-time status updates.
 
-> [!NOTE]  
->  As stated in Getting Started parts of our notion, don't forget to make sure that you have Node.js >= 16.14.2 and MySQL >= 8.0.3
+### Key Features
 
-## How to use
+- **🔐 JWT Authentication** - Secure user registration and login system
+- **📁 File Upload & Processing** - Upload CSV files with immediate response
+- **⚡ Background Processing** - Asynchronous file processing to prevent timeouts
+- **🔍 Dynamic Filtering** - Advanced filtering and pagination using NodeWave's FilterQueryV2 system
+- **📊 Data Management** - Store and retrieve products and sales data from processed files
+- **📈 Statistics Dashboard** - Real-time system statistics and metrics
 
-Clone this repository, and set up various things like :
+## 🛠️ Tech Stack
 
-- change package.json structure
-- change auth mechanism to match project
-- update readme (delete this how to use part and change the title!)
+- **Language**: TypeScript
+- **Framework**: Express.js
+- **ORM**: Prisma
+- **Database**: MySQL
+- **Authentication**: JWT + bcrypt
+- **Logging**: Winston + Morgan
+- **File Processing**: Custom CSV parser (no external libraries)
 
-> [!IMPORTANT]  
->  Steps below are steps to run on project, this repo is only a base, not a fully runnable project, this repo only serve as a template! If you wish to try this repo and add more functionality, please create your own branch locally :)
+## 🏗️ How It Works
 
-## Steps To Run Project Locally
-
+### 1. File Upload Flow
 ```
-git checkout develop
+User uploads CSV → Immediate success response → Background processing queue → Parse & store data → Update status
 ```
-Install dependencies with :
 
-```powershell
+### 2. Background Processing Architecture
+- **In-Memory Queue**: Files are queued for processing using `setImmediate()`
+- **Status Tracking**: Files progress through PENDING → PROCESSING → SUCCESS/FAILED
+- **Data Type Detection**: System automatically detects if uploaded data contains products or sales records
+- **Error Handling**: Failed processing is captured with detailed error messages
+
+### 3. Dynamic Filtering System
+The project uses NodeWave's advanced `FilterQueryV2` system that supports:
+- **Multi-field filtering** with AND/OR logic
+- **Search functionality** across multiple columns
+- **Range filtering** for dates and numbers
+- **Relational filtering** (one level deep)
+- **Pagination** with customizable page sizes
+- **Dynamic sorting** on any field
+
+### 4. Data Models
+```
+User (Authentication)
+├── FileUpload (Upload tracking)
+    ├── Product (Parsed product data)
+    └── SalesRecord (Parsed sales data)
+```
+
+## 📋 API Endpoints
+
+### Authentication
+
+#### Register User
+```http
+POST /auth/register
+Content-Type: application/json
+
+{
+  "email": "user@example.com",
+  "password": "password123",
+  "fullName": "John Doe"
+}
+```
+
+#### Login User
+```http
+POST /auth/login
+Content-Type: application/json
+
+{
+  "email": "user@example.com",
+  "password": "password123"
+}
+```
+
+### File Upload & Processing
+
+#### Upload File
+```http
+POST /files/upload
+Authorization: Bearer <token>
+Content-Type: application/json
+
+{
+  "fileName": "products.csv",
+  "originalName": "products.csv",
+  "fileContent": "name,sku,price,category,stock\nProduct A,SKU001,29.99,Electronics,100"
+}
+```
+
+#### Get Files List (with filtering)
+```http
+GET /files?page=1&rows=10&status=SUCCESS&search=product
+Authorization: Bearer <token>
+```
+
+**Query Parameters:**
+- `page` - Page number (default: 1)
+- `rows` - Items per page (default: 10)
+- `status` - Filter by status (PENDING, PROCESSING, SUCCESS, FAILED)
+- `search` - Search in fileName or originalName
+- `orderKey` - Sort field (default: createdAt)
+- `orderRule` - Sort direction (asc/desc, default: desc)
+
+#### Other File Endpoints
+```http
+GET /files/:id                    # Get file details
+DELETE /files/:id                 # Delete file
+GET /files/processing-status      # Get processing queue status
+```
+
+### Data Retrieval
+
+#### Get Products (with advanced filtering)
+```http
+GET /data/products?page=1&rows=10&category=Electronics&search=laptop&fileUploadId=1
+Authorization: Bearer <token>
+```
+
+#### Get Sales Records (with date range filtering)
+```http
+GET /data/sales?page=1&rows=10&region=US&startDate=2024-01-01&endDate=2024-12-31
+Authorization: Bearer <token>
+```
+
+#### Get System Statistics
+```http
+GET /data/statistics
+```
+
+## 📁 Supported File Formats
+
+The system supports CSV files with automatic data type detection:
+
+### Product Data Format
+```csv
+name,sku,price,category,stock
+"Laptop Pro 15","LP15-001",1299.99,"Electronics",50
+"Wireless Mouse","WM-002",29.99,"Electronics",200
+"Office Chair","OC-003",249.99,"Furniture",25
+```
+
+### Sales Data Format  
+```csv
+productName,quantity,unitPrice,totalAmount,saleDate,customerName,customerEmail,region
+"Laptop Pro 15",1,1299.99,1299.99,"2024-01-15","John Smith","john@example.com","US"
+"Wireless Mouse",2,29.99,59.98,"2024-01-16","Jane Doe","jane@example.com","EU"
+```
+
+## 🔄 Background Processing Flow
+
+1. **Upload**: User uploads file via `/files/upload` → **Immediate success response**
+2. **Queue**: File is queued for background processing using `setImmediate()`
+3. **Process**: System processes file asynchronously:
+   - Parses CSV content using custom parser
+   - Detects data type (products/sales) based on headers
+   - Stores records in appropriate database tables
+   - Updates processing status and metrics
+4. **Complete**: File status updated to SUCCESS or FAILED with detailed logs
+
+## 🚀 Setup & Installation
+
+### Prerequisites
+- Node.js >= 16.14.2
+- MySQL >= 8.0.3
+- npm or yarn
+
+### 1. Install Dependencies
+```bash
 npm install
 ```
 
-Get .env value, and change db connection url in .env
-
-Run prisma db migration with :
-
-```powershell
-npx prisma migrate --name <migration_name>
-```
-Run seeder for admin user :
-
-  > [!IMPORTANT]  
-  > Delete this part on your repository in case there is no seeder available on your codebase.
-
-```powershell
-npm run seed
+### 2. Environment Setup
+Configure your `.env` file:
+```env
+DATABASE_URL="mysql://username:password@localhost:3306/your_database"
+SHADOW_DATABASE_URL="mysql://username:password@localhost:3306/shadow_db"
+JWT_SECRET="your-super-secret-jwt-key"
+NODE_LOCAL_PORT=3150
+ENVIRONMENT=dev
+ALLOWED_ORIGINS="*"
 ```
 
-## Running The App 
+### 3. Database Setup
+```bash
+# Generate Prisma client (no migration needed for this setup)
+npx prisma generate
 
-This base app was meant to have several different implementation, for now we just have a REST API Server, but if we happen to 
-have more like grpc, cron, or maybe pub-sub consumer, we can register it too the 
-`/app` and `/server` folder 
-
-and register the command into the `/src/index.ts` as the argument of choice 
-
-By Default, to run the app with hot-reload simply run 
+# Create your database manually in MySQL
+# The schema will be applied when you first run the app
 ```
+
+### 4. Run the Application
+
+**Development (with hot reload):**
+```bash
 npm run dev -- --service=rest
 ```
 
-If you want to start the build version, run it with : 
-```
+**Production:**
+```bash
+npm run build
 npm start -- --service=rest
 ```
 
-## Creating new features / endpoint
+The server will start on `http://localhost:3150`
 
-- Branch out from develop
+## 📖 API Response Format
+
+### Success Response
+```json
+{
+  "success": true,
+  "message": "Operation successful",
+  "data": {
+    // Response data
+  }
+}
 ```
-git checkout -b <branch_name>
+
+### Paginated Response
+```json
+{
+  "success": true,
+  "data": {
+    "entries": [...],
+    "totalData": 100,
+    "totalPage": 10,
+    "currentPage": 1,
+    "pageSize": 10
+  }
+}
 ```
-- Create a new schema (if needed) on prisma/schema.prisma
 
-- Migrate the schema with :
+### Error Response
+```json
+{
+  "success": false,
+  "message": "Error description"
+}
 ```
-npx prisma migrate --name <migration_name>
+
+## 🧪 Testing the System
+
+### Quick Test with cURL
+
+1. **Register a user:**
+```bash
+curl -X POST http://localhost:3150/auth/register \
+  -H "Content-Type: application/json" \
+  -d '{"email":"test@example.com","password":"password123","fullName":"Test User"}'
 ```
 
-- Create new entity on `/entities` folder
+2. **Login and get token:**
+```bash
+curl -X POST http://localhost:3150/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"email":"test@example.com","password":"password123"}'
+```
 
-- Create validation for that entities (for create and update if any) on `/validations` folder
+3. **Upload a file:**
+```bash
+curl -X POST http://localhost:3150/files/upload \
+  -H "Authorization: Bearer YOUR_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"fileName":"test.csv","originalName":"test.csv","fileContent":"name,sku,price\nProduct A,SKU001,29.99"}'
+```
 
-- Create the service layer on /services
+4. **Check processing status:**
+```bash
+curl http://localhost:3150/files \
+  -H "Authorization: Bearer YOUR_TOKEN"
+```
 
-- Link it into controller in /controllers
+## 🏗️ Project Architecture
 
-- Create new routes file instance at /routes, for example `ProductRoutes.ts`
+```
+src/
+├── controllers/rest/          # HTTP request handlers
+│   ├── AuthController.ts      # Authentication endpoints
+│   ├── FileUploadController.ts # File upload & management
+│   └── DataController.ts      # Data retrieval endpoints
+├── services/                  # Business logic layer
+│   ├── BackgroundProcessingService.ts # File processing queue
+│   └── helpers/               # Service utilities
+├── middlewares/               # Express middlewares
+│   └── authMiddleware.ts      # JWT authentication
+├── utils/                     # Utility functions
+│   └── excelParser.utils.ts   # Custom CSV parser
+├── entities/                  # TypeScript interfaces
+├── routes/                    # API route definitions
+└── prisma/                    # Database schema
+```
 
-- Register the routes into registry (`routes/registry.ts`)
+## 🔧 Key Implementation Details
 
-- use the routes, with router.use(), for example :
+### Custom CSV Parser
+- **No external libraries** - Built from scratch for flexibility
+- **Type detection** - Automatically parses strings, numbers, dates
+- **Quoted field support** - Handles CSV escaping and quotes
+- **Error handling** - Graceful parsing with detailed error messages
 
-  ```js
-  router.use("/products", RoutesRegistry.productRoutes);
-  ```
+### Background Processing
+- **Non-blocking** - Uses `setImmediate()` for asynchronous processing
+- **Status tracking** - Real-time status updates (PENDING → PROCESSING → SUCCESS/FAILED)
+- **Error recovery** - Failed files are marked with detailed error messages
+- **Memory efficient** - In-memory queue with reasonable limits
 
-- Test in postman and document it with example
+### Dynamic Filtering (FilterQueryV2)
+- **Multi-field filtering** - Combine multiple filters with AND/OR logic
+- **Search capabilities** - Full-text search across specified fields
+- **Range filtering** - Date and numeric range filtering
+- **Relational filtering** - Filter on related table fields (one level deep)
+- **Flexible pagination** - Configurable page sizes and navigation
 
+## 🔐 Security Features
 
-## Folder Structures Brief Explanation 
+- **JWT Authentication** - Secure token-based authentication
+- **Password Hashing** - bcrypt with salt rounds
+- **User Isolation** - Users can only access their own uploaded files
+- **Input Validation** - Request validation and sanitization
+- **Error Handling** - Secure error messages without sensitive data exposure
 
-#### Apps and Servers 
+## 📊 Performance Considerations
 
-- `/app` 
+- **Background Processing** - Prevents request timeouts for large files
+- **Database Indexing** - Strategic indexes on frequently queried fields
+- **Pagination** - Default limits to prevent large data transfers
+- **Memory Management** - Efficient CSV parsing without loading entire files into memory
 
-  This contains app inilization for different communication protocol, files inside this directory is responsible to starting up the communcation protocol based server
+## 🚀 Production Considerations
 
-  Default app is rest, if you want to add more , you can add it by naming it something like `<protocol>.ts` , e.g. : `grpc.ts` , add it to instance.ts 
+For production deployment, consider:
 
-- `/server` 
-  
-  This contains server initialization for different communication 
-  protocol server, file inside this directory will responsible to hold the configuration needed, like the the server initialization, dependencies for this communcation protocol etc. 
+- **File Storage** - Use cloud storage (AWS S3, Google Cloud) instead of in-memory content
+- **Queue System** - Replace in-memory queue with Redis or message queue
+- **Database Migration** - Use proper Prisma migrations
+- **File Upload** - Implement proper multipart/form-data handling with multer
+- **Error Monitoring** - Add error tracking (Sentry, etc.)
+- **Rate Limiting** - Add request rate limiting
+- **CORS Configuration** - Proper CORS setup for frontend integration
 
-  if you want to add more , you can add it by naming it something like `<protocol>.ts` , e.g. : `grpc.ts` , add it to the instance.ts 
+## 🤝 Contributing
 
-> [!IMPORTANT]  
-> After you add both app and server, configure it to be receivable my the command line argument, by adding the app function and argument into the if condition inside `src/index.ts`
+This is a NodeWave base template. To add new features:
 
-#### Entities 
+1. Create feature branch from `master`
+2. Add new endpoints following the existing pattern
+3. Update this documentation
+4. Test thoroughly before merging
 
-- `/entity` 
+---
 
-  Files inside this directory, will hold various `interfaces` or `types`, needed for data transfer and access (DTOs and DAOs), in this directory, we follow the Domain-Driven pattern, where it will easily transalates to each domain means each table on db. 
-
-  Or maybe in other case, you can also specify global types that is used everywhere in the code, like `Service.ts` that we currently have and `Query.ts` entities, this means to hold all types related to service responses and dynamic query arguments and also pagination result.
-
-
-#### Packages and Utils
-
-- `/pkg` 
-
-  This dir is simple, you categorize 3rd party integration inside of this dir, you can also define types spesific to this 3rd party inside here, so the common practice is something like : 
-  ```
-    - pkg 
-        - package name 
-            - index.ts -> package instance (use singleton if possible please)
-            - interfaces.ts -> for package spesific typing 
-            - utils.ts  -> for utility functions
-            - ... methodspecific.ts -> for specific sub-functionality, e.g: coreAPI.ts in midtrans pkg only holds functions needed to do payment through midtrans's Core API
-  ```
-
-  We make it in this structure so it will be clear that all of this belongs to specific 3rd party.
-
-- `/utils` 
-
-  This dir will holds utility function that are needed for helpers globally, like string manipulation, dates manipulation etc 
-
- 
-#### Controllers and Services 
-
- - `/controllers` 
-  Here, we also follow domain based filenaming, so each domain will have 1 controller, with the responsibility in controller, only limited to 
-    - Retrieve and parse the request.
-    - Call service function 
-    - Return the response.
-
-
- - `/services`
+**Built with ❤️ by NodeWave Engineering**
 
   Here, we also follow domain based file naming, each domain will have 1 services, and maybe 1 helper service if needed, with the responsibility in service is only to do business logics, calling the db (we don't use repository since prisma orm is already more or less like a repository in it's nature). Please never mix up 3rd party integration here, as we already have the package for that, unless the 3rd party will also have controllers (like midtrans callback).
 

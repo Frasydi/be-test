@@ -1,0 +1,11 @@
+name,sku,price,category,stock
+"Gaming Laptop","LAPTOP001",1299.99,"Electronics",25
+"Wireless Mouse","MOUSE001",29.99,"Electronics",150
+"Mechanical Keyboard","KEYBOARD001",89.99,"Electronics",75
+"4K Monitor","MONITOR001",399.99,"Electronics",40
+"USB-C Hub","HUB001",49.99,"Electronics",200
+"Webcam HD","WEBCAM001",79.99,"Electronics",60
+"Headphones","HEADPHONE001",199.99,"Electronics",80
+"Tablet 10 inch","TABLET001",349.99,"Electronics",35
+"Smartphone Case","CASE001",19.99,"Accessories",300
+"Power Bank","POWERBANK001",39.99,"Electronics",120
