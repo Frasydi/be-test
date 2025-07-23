@@ -16,7 +16,7 @@ export interface ProductFilterQuery {
   orderRule?: string;
   category?: string;
   fileUploadId?: number;
-  search?: string;
+  filter?: Record<string, any>;
 }
 
 export interface SalesRecordFilterQuery {
@@ -26,7 +26,7 @@ export interface SalesRecordFilterQuery {
   orderRule?: string;
   productId?: number;
   fileUploadId?: number;
-  search?: string;
+  filter?: Record<string, any>;
   startDate?: string;
   endDate?: string;
 }
@@ -58,10 +58,22 @@ export class DataService {
         filterQuery.filters!.fileUploadId = filterOptions.fileUploadId;
       }
 
-      // Add search by name if provided
-      if (filterOptions.search) {
-        filterQuery.searchFilters!.name = filterOptions.search;
-        filterQuery.searchFilters!.sku = filterOptions.search;
+      // Add dynamic filters if provided
+      if (filterOptions.filter && typeof filterOptions.filter === 'object') {
+        Object.keys(filterOptions.filter).forEach(key => {
+          const value = filterOptions.filter![key];
+          if (value !== undefined && value !== null && value !== '') {
+            // For string values, use search filters (partial match)
+            if (typeof value === 'string') {
+              if (!filterQuery.searchFilters) filterQuery.searchFilters = {};
+              filterQuery.searchFilters[key] = value;
+            } else {
+              // For non-string values, use exact filters
+              if (!filterQuery.filters) filterQuery.filters = {};
+              filterQuery.filters[key] = value;
+            }
+          }
+        });
       }
 
       // Build Prisma query
@@ -193,10 +205,22 @@ export class DataService {
         filterQuery.filters!.fileUploadId = filterOptions.fileUploadId;
       }
 
-      // Add search by customer name or product name if provided
-      if (filterOptions.search) {
-        filterQuery.searchFilters!.customerName = filterOptions.search;
-        filterQuery.searchFilters!.productName = filterOptions.search;
+      // Add dynamic filters if provided
+      if (filterOptions.filter && typeof filterOptions.filter === 'object') {
+        Object.keys(filterOptions.filter).forEach(key => {
+          const value = filterOptions.filter![key];
+          if (value !== undefined && value !== null && value !== '') {
+            // For string values, use search filters (partial match)
+            if (typeof value === 'string') {
+              if (!filterQuery.searchFilters) filterQuery.searchFilters = {};
+              filterQuery.searchFilters[key] = value;
+            } else {
+              // For non-string values, use exact filters
+              if (!filterQuery.filters) filterQuery.filters = {};
+              filterQuery.filters[key] = value;
+            }
+          }
+        });
       }
 
       // Build Prisma query

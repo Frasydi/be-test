@@ -8,6 +8,21 @@ export class DataController {
    */
   static async getProducts(req: AuthenticatedRequest, res: Response) {
     try {
+      // Parse filter parameter if it exists
+      let filterObject = {};
+      if (req.query.filter) {
+        try {
+          filterObject = typeof req.query.filter === 'string' 
+            ? JSON.parse(req.query.filter) 
+            : req.query.filter;
+        } catch (error) {
+          return res.status(400).json({
+            success: false,
+            message: 'Invalid filter format. Use filter={name:"Fachri"}'
+          });
+        }
+      }
+
       const filterOptions = {
         page: req.query.page ? Number(req.query.page) : undefined,
         rows: req.query.rows ? Number(req.query.rows) : undefined,
@@ -15,7 +30,7 @@ export class DataController {
         orderRule: req.query.orderRule as string,
         category: req.query.category as string,
         fileUploadId: req.query.fileUploadId ? Number(req.query.fileUploadId) : undefined,
-        search: req.query.search as string
+        filter: filterObject
       };
 
       const result = await DataService.getProducts(filterOptions);
@@ -63,6 +78,21 @@ export class DataController {
    */
   static async getSalesRecords(req: AuthenticatedRequest, res: Response) {
     try {
+      // Parse filter parameter if it exists
+      let filterObject = {};
+      if (req.query.filter) {
+        try {
+          filterObject = typeof req.query.filter === 'string' 
+            ? JSON.parse(req.query.filter) 
+            : req.query.filter;
+        } catch (error) {
+          return res.status(400).json({
+            success: false,
+            message: 'Invalid filter format. Use filter={name:"Fachri"}'
+          });
+        }
+      }
+
       const filterOptions = {
         page: req.query.page ? Number(req.query.page) : undefined,
         rows: req.query.rows ? Number(req.query.rows) : undefined,
@@ -70,7 +100,7 @@ export class DataController {
         orderRule: req.query.orderRule as string,
         productId: req.query.productId ? Number(req.query.productId) : undefined,
         fileUploadId: req.query.fileUploadId ? Number(req.query.fileUploadId) : undefined,
-        search: req.query.search as string,
+        filter: filterObject,
         startDate: req.query.startDate as string,
         endDate: req.query.endDate as string
       };
