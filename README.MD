@@ -1,4 +1,4 @@
-# Excel Processing Backend System
+# Nodewave Backend
 
 A robust backend system for processing large Excel/CSV files with background processing, JWT authentication, and advanced dynamic filtering capabilities.
 

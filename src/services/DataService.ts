@@ -14,9 +14,9 @@ export interface ProductFilterQuery {
   rows?: number;
   orderKey?: string;
   orderRule?: string;
-  category?: string;
-  fileUploadId?: number;
-  filter?: Record<string, any>;
+  filters?: Record<string, any>;
+  searchFilters?: Record<string, any>;
+  rangedFilters?: any[];
 }
 
 export interface SalesRecordFilterQuery {
@@ -24,11 +24,9 @@ export interface SalesRecordFilterQuery {
   rows?: number;
   orderKey?: string;
   orderRule?: string;
-  productId?: number;
-  fileUploadId?: number;
-  filter?: Record<string, any>;
-  startDate?: string;
-  endDate?: string;
+  filters?: Record<string, any>;
+  searchFilters?: Record<string, any>;
+  rangedFilters?: any[];
 }
 
 export class DataService {
@@ -38,45 +36,18 @@ export class DataService {
    */
   static async getProducts(filterOptions: ProductFilterQuery): Promise<DataServiceResponse> {
     try {
-      // Build filter query from options
+      // Build FilteringQueryV2 structure properly
       const filterQuery: FilteringQueryV2 = {
-        page: filterOptions.page || 1,
-        rows: filterOptions.rows || 10,
-        orderKey: filterOptions.orderKey || 'createdAt',
-        orderRule: filterOptions.orderRule || 'desc',
-        filters: {},
-        searchFilters: {}
+        page: filterOptions.page,
+        rows: filterOptions.rows,
+        orderKey: filterOptions.orderKey,
+        orderRule: filterOptions.orderRule as 'asc' | 'desc',
+        filters: filterOptions.filters || {},
+        searchFilters: filterOptions.searchFilters || {},
+        rangedFilters: filterOptions.rangedFilters || []
       };
 
-      // Add category filter if provided
-      if (filterOptions.category) {
-        filterQuery.filters!.category = filterOptions.category;
-      }
-
-      // Add fileUploadId filter if provided
-      if (filterOptions.fileUploadId) {
-        filterQuery.filters!.fileUploadId = filterOptions.fileUploadId;
-      }
-
-      // Add dynamic filters if provided
-      if (filterOptions.filter && typeof filterOptions.filter === 'object') {
-        Object.keys(filterOptions.filter).forEach(key => {
-          const value = filterOptions.filter![key];
-          if (value !== undefined && value !== null && value !== '') {
-            // For string values, use search filters (partial match)
-            if (typeof value === 'string') {
-              if (!filterQuery.searchFilters) filterQuery.searchFilters = {};
-              filterQuery.searchFilters[key] = value;
-            } else {
-              // For non-string values, use exact filters
-              if (!filterQuery.filters) filterQuery.filters = {};
-              filterQuery.filters[key] = value;
-            }
-          }
-        });
-      }
-
-      // Build Prisma query
+      // Use your helper to build the query
       const prismaQuery = buildFilterQueryLimitOffsetV2(filterQuery);
 
       // Get products and total count
@@ -185,60 +156,19 @@ export class DataService {
    */
   static async getSalesRecords(filterOptions: SalesRecordFilterQuery): Promise<DataServiceResponse> {
     try {
-      // Build filter query from options
+      // Build FilteringQueryV2 structure properly
       const filterQuery: FilteringQueryV2 = {
-        page: filterOptions.page || 1,
-        rows: filterOptions.rows || 10,
-        orderKey: filterOptions.orderKey || 'saleDate',
-        orderRule: filterOptions.orderRule || 'desc',
-        filters: {},
-        searchFilters: {}
+        page: filterOptions.page,
+        rows: filterOptions.rows,
+        orderKey: filterOptions.orderKey,
+        orderRule: filterOptions.orderRule as 'asc' | 'desc',
+        filters: filterOptions.filters || {},
+        searchFilters: filterOptions.searchFilters || {},
+        rangedFilters: filterOptions.rangedFilters || []
       };
 
-      // Add productId filter if provided
-      if (filterOptions.productId) {
-        filterQuery.filters!.productId = filterOptions.productId;
-      }
-
-      // Add fileUploadId filter if provided
-      if (filterOptions.fileUploadId) {
-        filterQuery.filters!.fileUploadId = filterOptions.fileUploadId;
-      }
-
-      // Add dynamic filters if provided
-      if (filterOptions.filter && typeof filterOptions.filter === 'object') {
-        Object.keys(filterOptions.filter).forEach(key => {
-          const value = filterOptions.filter![key];
-          if (value !== undefined && value !== null && value !== '') {
-            // For string values, use search filters (partial match)
-            if (typeof value === 'string') {
-              if (!filterQuery.searchFilters) filterQuery.searchFilters = {};
-              filterQuery.searchFilters[key] = value;
-            } else {
-              // For non-string values, use exact filters
-              if (!filterQuery.filters) filterQuery.filters = {};
-              filterQuery.filters[key] = value;
-            }
-          }
-        });
-      }
-
-      // Build Prisma query
+      // Use your helper to build the query
       const prismaQuery = buildFilterQueryLimitOffsetV2(filterQuery);
-
-      // Add date range filter if provided
-      if (filterOptions.startDate || filterOptions.endDate) {
-        const dateFilter: any = {};
-        if (filterOptions.startDate) {
-          dateFilter.gte = new Date(filterOptions.startDate);
-        }
-        if (filterOptions.endDate) {
-          dateFilter.lte = new Date(filterOptions.endDate);
-        }
-        prismaQuery.where.AND.push({
-          saleDate: dateFilter
-        });
-      }
 
       // Get sales records and total count
       const [salesRecords, totalCount] = await Promise.all([

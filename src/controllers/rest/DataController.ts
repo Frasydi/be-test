@@ -8,17 +8,47 @@ export class DataController {
    */
   static async getProducts(req: AuthenticatedRequest, res: Response) {
     try {
-      // Parse filter parameter if it exists
-      let filterObject = {};
-      if (req.query.filter) {
+      // Parse filters parameter if it exists
+      let filtersObject = {};
+      if (req.query.filters) {
         try {
-          filterObject = typeof req.query.filter === 'string' 
-            ? JSON.parse(req.query.filter) 
-            : req.query.filter;
+          filtersObject = typeof req.query.filters === 'string' 
+            ? JSON.parse(req.query.filters) 
+            : req.query.filters;
         } catch (error) {
           return res.status(400).json({
             success: false,
-            message: 'Invalid filter format. Use filter={name:"Fachri"}'
+            message: 'Invalid filters format. Use filters={"category":"Electronics"}'
+          });
+        }
+      }
+
+      // Parse searchFilters parameter if it exists
+      let searchFiltersObject = {};
+      if (req.query.searchFilters) {
+        try {
+          searchFiltersObject = typeof req.query.searchFilters === 'string' 
+            ? JSON.parse(req.query.searchFilters) 
+            : req.query.searchFilters;
+        } catch (error) {
+          return res.status(400).json({
+            success: false,
+            message: 'Invalid searchFilters format. Use searchFilters={"name":"laptop"}'
+          });
+        }
+      }
+
+      // Parse rangedFilters parameter if it exists
+      let rangedFiltersArray = [];
+      if (req.query.rangedFilters) {
+        try {
+          rangedFiltersArray = typeof req.query.rangedFilters === 'string' 
+            ? JSON.parse(req.query.rangedFilters) 
+            : req.query.rangedFilters;
+        } catch (error) {
+          return res.status(400).json({
+            success: false,
+            message: 'Invalid rangedFilters format. Use rangedFilters=[{"key":"price","start":50000,"end":60000}]'
           });
         }
       }
@@ -28,9 +58,9 @@ export class DataController {
         rows: req.query.rows ? Number(req.query.rows) : undefined,
         orderKey: req.query.orderKey as string,
         orderRule: req.query.orderRule as string,
-        category: req.query.category as string,
-        fileUploadId: req.query.fileUploadId ? Number(req.query.fileUploadId) : undefined,
-        filter: filterObject
+        filters: filtersObject,
+        searchFilters: searchFiltersObject,
+        rangedFilters: rangedFiltersArray
       };
 
       const result = await DataService.getProducts(filterOptions);
@@ -78,17 +108,47 @@ export class DataController {
    */
   static async getSalesRecords(req: AuthenticatedRequest, res: Response) {
     try {
-      // Parse filter parameter if it exists
-      let filterObject = {};
-      if (req.query.filter) {
+      // Parse filters parameter if it exists
+      let filtersObject = {};
+      if (req.query.filters) {
         try {
-          filterObject = typeof req.query.filter === 'string' 
-            ? JSON.parse(req.query.filter) 
-            : req.query.filter;
+          filtersObject = typeof req.query.filters === 'string' 
+            ? JSON.parse(req.query.filters) 
+            : req.query.filters;
         } catch (error) {
           return res.status(400).json({
             success: false,
-            message: 'Invalid filter format. Use filter={name:"Fachri"}'
+            message: 'Invalid filters format. Use filters={"region":"US"}'
+          });
+        }
+      }
+
+      // Parse searchFilters parameter if it exists
+      let searchFiltersObject = {};
+      if (req.query.searchFilters) {
+        try {
+          searchFiltersObject = typeof req.query.searchFilters === 'string' 
+            ? JSON.parse(req.query.searchFilters) 
+            : req.query.searchFilters;
+        } catch (error) {
+          return res.status(400).json({
+            success: false,
+            message: 'Invalid searchFilters format. Use searchFilters={"customerName":"john"}'
+          });
+        }
+      }
+
+      // Parse rangedFilters parameter if it exists
+      let rangedFiltersArray = [];
+      if (req.query.rangedFilters) {
+        try {
+          rangedFiltersArray = typeof req.query.rangedFilters === 'string' 
+            ? JSON.parse(req.query.rangedFilters) 
+            : req.query.rangedFilters;
+        } catch (error) {
+          return res.status(400).json({
+            success: false,
+            message: 'Invalid rangedFilters format. Use rangedFilters=[{"key":"price","start":50000,"end":60000}]'
           });
         }
       }
@@ -98,11 +158,9 @@ export class DataController {
         rows: req.query.rows ? Number(req.query.rows) : undefined,
         orderKey: req.query.orderKey as string,
         orderRule: req.query.orderRule as string,
-        productId: req.query.productId ? Number(req.query.productId) : undefined,
-        fileUploadId: req.query.fileUploadId ? Number(req.query.fileUploadId) : undefined,
-        filter: filterObject,
-        startDate: req.query.startDate as string,
-        endDate: req.query.endDate as string
+        filters: filtersObject,
+        searchFilters: searchFiltersObject,
+        rangedFilters: rangedFiltersArray,
       };
 
       const result = await DataService.getSalesRecords(filterOptions);
