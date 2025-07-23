@@ -4,4 +4,4 @@ node_modules
 dist/
 logs
 *.log
-uploads/*
+uploads/
